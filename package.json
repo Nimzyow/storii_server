@@ -1,0 +1,33 @@
+{
+  "name": "storii_server",
+  "version": "1.0.0",
+  "description": "Storii_server",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nimzyow/storii_server.git"
+  },
+  "keywords": [],
+  "author": "Nima Soufiani and Laura Jackson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nimzyow/storii_server/issues"
+  },
+  "homepage": "https://github.com/Nimzyow/storii_server#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "mocha": "^7.1.2",
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1"
+  }
+}
