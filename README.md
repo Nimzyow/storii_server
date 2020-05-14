@@ -13,12 +13,12 @@ List of things to do:
 - make a get request to "/" for a response x
 
 - install dependencies
-    mongoose
+    mongoose x
 
 - mongoose
-    set up User Schema
-    set up Story Schema
-    set up Entry Schema
+    set up User Schema x
+    set up Story Schema x
+    set up Entry Schema x
 
 - node/express
     
