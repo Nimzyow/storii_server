@@ -3,22 +3,22 @@ Storii_server
 List of things to do:
 
 - install dependencies
-    nodemon x
-    express x
-    bcrypt x
-    jwt x
-    mocha x
-    supertest x
+    nodemon [x]
+    express [x]
+    bcrypt [x]
+    jwt [x]
+    mocha [x]
+    supertest [x]
 
 - make a get request to "/" for a response x
 
 - install dependencies
-    mongoose x
+    mongoose [x]
 
 - mongoose
-    set up User Schema x
-    set up Story Schema x
-    set up Entry Schema x
+    set up User Schema [x]
+    set up Story Schema [x]
+    set up Entry Schema [x]
 
 - node/express
     
@@ -27,11 +27,11 @@ List of things to do:
     2 - login and authenticate user [x] tests []
 
     API/STORY
-    3 - add a story(use only once for MVP)
-    4 - get a story
+    3 - add a story(use only once for MVP) [] tests []
+    4 - get a story [] tests []
     
     API/ENTRY
-    5 - add a new entry to entry table
+    5 - add a new entry to entry table [x] tests []
     
     
 
