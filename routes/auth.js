@@ -5,17 +5,27 @@ const jwt = require("jsonwebtoken");
 
 const config = require("../.config.js");
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
 // @route   GET /auth
 // @desc    Get logged in user
 // @access  Private
+router.get("/", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    return res.json(user);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(err.message);
+    return res.status(401).json({ msg: "You need to sign in!" });
+  }
+});
 
 // @route  POST /auth
 // @desc   Authorize the user and give back a token
 // @access Public
-
 router.post(
   "/",
   [
