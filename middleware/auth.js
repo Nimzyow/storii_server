@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../.config");
 
 
+// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
   const token = req.header("x-auth-token");
   if (!token) {
@@ -17,5 +18,4 @@ module.exports = (req, res, next) => {
   } catch (err) {
     return res.status(401).json({ msg: "You need to sign in!" });
   }
-  return res.status(401).json({ msg: "Something went wrong...soz" });
 };

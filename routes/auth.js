@@ -14,7 +14,7 @@ const router = express.Router();
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select("-password");
     return res.json(user);
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -32,6 +32,7 @@ router.post(
     check("email", "Please enter an email").isEmail(),
     check("password", "Please enter a password").exists(),
   ],
+  // eslint-disable-next-line consistent-return
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -67,7 +68,6 @@ router.post(
       console.error(err.message);
       return res.status(500).send("Connection error");
     }
-    return res.status(500).send("Connection error");
   },
 );
 
