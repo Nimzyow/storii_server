@@ -23,8 +23,8 @@ List of things to do:
 - node/express
     
     API/AUTH
-    1 - create a new user
-    2 - login and authenticate user
+    1 - create a new user [x] tests []
+    2 - login and authenticate user [x] tests []
 
     API/STORY
     3 - add a story(use only once for MVP)
