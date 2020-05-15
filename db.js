@@ -53,8 +53,11 @@ const disconnect = () => {
   });
 };
 
+const cleanDatabase = () => mongoose.connection.db.dropDatabase();
+
 const db = {
   connect,
   disconnect,
+  cleanDatabase,
 };
 module.exports = db;

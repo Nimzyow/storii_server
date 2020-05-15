@@ -17,6 +17,7 @@ router.post("/",
     check("penName", "Please enter a pen name").exists(),
     check("email", "Please enter an email").isEmail(),
     check("password", "Please enter a password").exists(),
+  // eslint-disable-next-line consistent-return
   ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -56,11 +57,9 @@ router.post("/",
       });
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error(err.message);
+      console.error(err);
       res.status(500).status("server error");
     }
-
-    return res.status(500).send("Connection error");
   });
 
 module.exports = router;

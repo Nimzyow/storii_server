@@ -33,17 +33,17 @@ describe("users routes", () => {
     db.disconnect();
   });
   describe("POST new user", () => {
+    let newUser;
+
+    beforeEach(() => {
+      newUser = {
+        email: "test@test.com",
+        penName: "notGoodPenName",
+        password: "missingPenName",
+      };
+    });
+
     describe("Credential errors", () => {
-      let newUser;
-
-      beforeEach(() => {
-        newUser = {
-          email: "test@test.com",
-          penName: "notGoodPenName",
-          password: "missingPenName",
-        };
-      });
-
       it("for penName", (done) => {
         delete newUser.penName;
         const expectedErrorMsg = [
@@ -81,6 +81,21 @@ describe("users routes", () => {
 
         checkCredentialErrors(newUser, expectedErrorMsg, done);
       });
+    });
+
+    it("successful response", (done) => {
+      db.cleanDatabase();
+      request(app)
+        .post("/users")
+        .send(newUser)
+        .set("Content-Type", "application/json")
+        .end((err, res) => {
+          if (err) {
+            assert.fail(0, 1, "Did not fail an expected fail");
+          }
+          expect(res.statusCode).to.equal(200);
+          done();
+        });
     });
   });
 });
