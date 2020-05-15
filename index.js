@@ -1,4 +1,7 @@
 const app = require("./server");
+const db = require("./db");
+
+db.connect();
 
 const PORT = 4000;
 

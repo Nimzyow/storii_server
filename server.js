@@ -1,8 +1,5 @@
 const express = require("express");
 
-const connectDB = require("./db");
-
-connectDB();
 const app = express();
 
 // middleware
