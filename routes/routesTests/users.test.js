@@ -1,10 +1,8 @@
 const { expect, assert } = require("chai");
-
 const request = require("supertest");
+
 const db = require("../../db");
 const app = require("../../server");
-
-const PORT = 4777;
 
 const checkCredentialErrors = (newUser, expectedErrorMsg, done) => {
   request(app)
@@ -21,21 +19,11 @@ const checkCredentialErrors = (newUser, expectedErrorMsg, done) => {
 };
 
 describe("users routes", () => {
-  let server;
-
-  before(async () => {
-    await db.connect();
-    server = app.listen(PORT);
-  });
-
-  after(async () => {
-    server.close();
-    db.disconnect();
-  });
   describe("POST new user", () => {
     let newUser;
 
     beforeEach(() => {
+      db.cleanDatabase();
       newUser = {
         email: "test@test.com",
         penName: "notGoodPenName",
@@ -84,7 +72,6 @@ describe("users routes", () => {
     });
 
     it("successful response", (done) => {
-      db.cleanDatabase();
       request(app)
         .post("/users")
         .send(newUser)
@@ -100,7 +87,6 @@ describe("users routes", () => {
     });
 
     it("existing user error response", (done) => {
-      db.cleanDatabase();
       request(app)
         .post("/users")
         .send(newUser)
