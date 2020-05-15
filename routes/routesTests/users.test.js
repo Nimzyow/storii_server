@@ -94,7 +94,32 @@ describe("users routes", () => {
             assert.fail(0, 1, "Did not fail an expected fail");
           }
           expect(res.statusCode).to.equal(200);
+          expect(res.body.token).to.be.a("string");
           done();
+        });
+    });
+
+    it("existing user error response", (done) => {
+      db.cleanDatabase();
+      request(app)
+        .post("/users")
+        .send(newUser)
+        .set("Content-Type", "application/json")
+        .end((err) => {
+          if (err) {
+            assert.fail(0, 1, "Did not fail an expected fail");
+          }
+          request(app)
+            .post("/users")
+            .send(newUser)
+            .set("Content-Type", "application/json")
+            .end((error, res) => {
+              if (error) {
+                assert.fail(0, 1, "Did not fail an expected fail");
+              }
+              expect(res.statusCode).to.equal(401);
+              done();
+            });
         });
     });
   });
