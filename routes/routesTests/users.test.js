@@ -5,46 +5,82 @@ const db = require("../../db");
 const app = require("../../server");
 
 const PORT = 4777;
+
+const checkCredentialErrors = (newUser, expectedErrorMsg, done) => {
+  request(app)
+    .post("/users")
+    .send(newUser)
+    .end((err, res) => {
+      if (err) {
+        assert.fail(0, 1, "Did not fail an expected fail");
+      }
+      expect(res.statusCode).to.equal(400);
+      expect(res.body.errors).to.deep.equal(expectedErrorMsg);
+      done();
+    });
+};
+
 describe("users routes", () => {
   let server;
 
-  beforeEach(async () => {
+  before(async () => {
     await db.connect();
-
     server = app.listen(PORT);
   });
 
-  afterEach(async () => {
+  after(async () => {
     server.close();
     db.disconnect();
   });
+  describe("POST new user", () => {
+    describe("Credential errors", () => {
+      let newUser;
 
-  describe("CREATE new user", () => {
-    it("on no penName, get error ", (done) => {
-      const newUser = {
-        email: "email@email.com",
-        password: "missingPenName",
-      };
+      beforeEach(() => {
+        newUser = {
+          email: "test@test.com",
+          penName: "notGoodPenName",
+          password: "missingPenName",
+        };
+      });
 
-      const expectedErrorMsg = [
-        {
-          location: "body",
-          msg: "Please enter a pen name",
-          param: "penName",
-        },
-      ];
-      request(app)
-        .post("/users")
-        .send(newUser)
-        .end((err, res) => {
-          if (err) {
-            console.log(err);
-            assert.fail(0, 1, "Did not fail an expected fail");
-          }
-          expect(res.statusCode).to.equal(400);
-          expect(res.body.errors).to.deep.equal(expectedErrorMsg);
-          done();
-        });
+      it("for penName", (done) => {
+        delete newUser.penName;
+        const expectedErrorMsg = [
+          {
+            location: "body",
+            msg: "Please enter a pen name",
+            param: "penName",
+          },
+        ];
+        checkCredentialErrors(newUser, expectedErrorMsg, done);
+      });
+      it("for email", (done) => {
+        delete newUser.email;
+
+        const expectedErrorMsg = [
+          {
+            location: "body",
+            msg: "Please enter an email",
+            param: "email",
+          },
+        ];
+
+        checkCredentialErrors(newUser, expectedErrorMsg, done);
+      });
+      it("for password", (done) => {
+        delete newUser.password;
+
+        const expectedErrorMsg = [
+          {
+            location: "body",
+            msg: "Please enter a password",
+            param: "password",
+          },
+        ];
+
+        checkCredentialErrors(newUser, expectedErrorMsg, done);
+      });
     });
   });
 });
