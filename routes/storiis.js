@@ -38,5 +38,14 @@ router.post("/", [
 // @desc   Retrieves a storii
 // @access Public
 
+router.get("/:id", async (req, res) => {
+  try {
+    const storii = await Storii.findById(req.params.id);
+    return res.json(storii);
+  } catch (err) {
+    console.error(err);
+    return res.status(404).json({ msg: "Page not found" });
+  }
+});
 
 module.exports = router;

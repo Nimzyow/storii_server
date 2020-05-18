@@ -121,19 +121,31 @@ describe("storii routes", () => {
               assert.fail(0, 1, "Unexpected fail");
             }
             request(app)
-              .get(`/storii/${storiiRes.id}`)
+              .get(`/storii/${storiiRes.body._id}`)
               .end((err, res) => {
                 if (err) {
                   assert.fail(0, 1, "Unexpected fail");
                 }
                 expect(res.body.title).to.equal(storii.title);
                 expect(res.body.mainGenre).to.equal(storii.mainGenre);
-                expect(res.body.entries).to.be.empty();
+                expect(res.body.entries).to.deep.equal([]);
                 done();
               });
           });
       };
       createNewCustomUser(callback);
+    });
+    it("not found", (done) => {
+      request(app)
+        .get("/storii/notFound")
+        .end((err, res) => {
+          if (err) {
+            assert.fail(0, 1, "Unexpected fail");
+          }
+          expect(res.statusCode).to.equal(404);
+          expect(res.body.errors).to.deep.equal({ msg: "Page not found" });
+          done();
+        });
     });
   });
 });
