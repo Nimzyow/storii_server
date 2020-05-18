@@ -12,9 +12,9 @@ const entrySchema = new Schema({
     ref: "User",
     required: true,
   },
-  story: {
+  storii: {
     type: Schema.Types.ObjectId,
-    ref: "Story",
+    ref: "Storii",
     required: true,
   },
 },

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const storySchema = new Schema({
+const storiiSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -37,4 +37,4 @@ const storySchema = new Schema({
   timestamps: true,
 });
 
-module.exports = mongoose.model("Story", storySchema);
+module.exports = mongoose.model("Storii", storiiSchema);

@@ -17,7 +17,7 @@ const userSchema = new Schema({
     required: true,
   },
   writesTo: [
-    { type: Schema.Types.ObjectId, ref: "Story" },
+    { type: Schema.Types.ObjectId, ref: "Storii" },
   ],
   image: {
     type: String,
