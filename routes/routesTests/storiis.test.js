@@ -2,7 +2,7 @@ const { expect, assert } = require("chai");
 const request = require("supertest");
 
 const app = require("../../server");
-const { createNewCustomUser } = require("./customTestCommands.test");
+const { createNewCustomUser, createNewStorii } = require("./customTestCommands.test");
 
 describe("storii routes", () => {
   let storii;
@@ -136,16 +136,41 @@ describe("storii routes", () => {
       createNewCustomUser(callback);
     });
     it("not found", (done) => {
+      const unfoundObjectId = "507f1f77bcf86dd799439011";
       request(app)
-        .get("/storii/notFound")
+        .get(`/storii/${unfoundObjectId}`)
         .end((err, res) => {
           if (err) {
             assert.fail(0, 1, "Unexpected fail");
           }
           expect(res.statusCode).to.equal(404);
-          expect(res.body.errors).to.deep.equal({ msg: "Page not found" });
+          expect(res.body).to.deep.equal({ msg: "Page not found" });
           done();
         });
+    });
+  });
+  describe.only("DELETE storii", () => {
+    it("is successful", (done) => {
+      const callback = (token, storiiRes) => {
+        request(app)
+          .delete(`/storii/${storiiRes._id}`)
+          .set({
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          })
+          .end((err, res) => {
+            if (err) {
+              assert.fail(0, 1, "Unexpected fail");
+            }
+            expect(res.statusCode).to.equal(200);
+            expect(res.body).to.equal({ msg: "Storii deleted!" });
+            done();
+          });
+      };
+
+      createNewCustomUser((token) => {
+        createNewStorii(token, callback);
+      });
     });
   });
 });
