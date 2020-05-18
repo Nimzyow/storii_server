@@ -5,7 +5,7 @@ const db = require("../../db");
 const app = require("../../server");
 const { createNewCustomUser } = require("./customTestCommands.test");
 
-describe.only("storii routes", () => {
+describe("storii routes", () => {
   let storii;
   beforeEach(() => {
     storii = {
@@ -14,12 +14,13 @@ describe.only("storii routes", () => {
       description: "defaultDescription",
       mainGenre: "defaultGenre",
     };
+
+    // db.cleanDatabase();
   });
   describe("Creation errors", () => {
     it("for no title", (done) => {
-      db.cleanDatabase();
       storii.title = "";
-      // post for new storii with no title
+
       const expectedErrorMsg = [
         {
           location: "body",
@@ -39,7 +40,7 @@ describe.only("storii routes", () => {
           .send(storii)
           .end((err, res) => {
             if (err) {
-              assert.fail(0, 1, "Did not fail an expected fail");
+              assert.fail(0, 1, "Unexpected fail");
             }
             expect(res.statusCode).to.equal(400);
             expect(res.body.errors).to.deep.equal(expectedErrorMsg);
@@ -49,7 +50,6 @@ describe.only("storii routes", () => {
       createNewCustomUser(callback);
     });
     it("for no mainGenre", (done) => {
-      db.cleanDatabase();
       storii.mainGenre = "";
       // post for new storii with no title
       const expectedErrorMsg = [
@@ -71,7 +71,7 @@ describe.only("storii routes", () => {
           .send(storii)
           .end((err, res) => {
             if (err) {
-              assert.fail(0, 1, "Did not fail an expected fail");
+              assert.fail(0, 1, "Unexpected fail");
             }
             expect(res.statusCode).to.equal(400);
             expect(res.body.errors).to.deep.equal(expectedErrorMsg);
@@ -83,7 +83,6 @@ describe.only("storii routes", () => {
   });
   describe("POST storii", () => {
     it("is successful", (done) => {
-      db.cleanDatabase();
       const callback = (token) => {
         request(app)
           .post("/storii")
@@ -94,17 +93,17 @@ describe.only("storii routes", () => {
           .send(storii)
           .end((err, res) => {
             if (err) {
-              assert.fail(0, 1, "Did not fail an expected fail");
+              assert.fail(0, 1, "Unexpected fail");
             }
+
             expect(res.statusCode).to.equal(200);
-            expect(res.body.storii).to.deep.equal("");
+            expect(res.body.owner).to.be.a("string");
+            expect(res.body.title).to.equal(storii.title);
+            expect(res.body.mainGenre).to.equal(storii.mainGenre);
             done();
           });
       };
       createNewCustomUser(callback);
-    });
-    it("", () => {
-
     });
   });
 });
