@@ -106,7 +106,7 @@ describe("storii routes", () => {
   });
 
   describe("GET storii", () => {
-    it.only("is successful", (done) => {
+    it("is successful", (done) => {
       // MAKE CUSTOM FUNCTION:
       const callback = (token) => {
         request(app)
@@ -128,8 +128,9 @@ describe("storii routes", () => {
                 }
                 expect(res.body.title).to.equal(storii.title);
                 expect(res.body.mainGenre).to.equal(storii.mainGenre);
+                expect(res.body.entries).to.be.empty();
+                done();
               });
-            done();
           });
       };
       createNewCustomUser(callback);
