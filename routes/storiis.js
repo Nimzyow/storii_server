@@ -34,4 +34,9 @@ router.post("/", [
   }
 });
 
+// @route  GET /storii/:id
+// @desc   Retrieves a storii
+// @access Public
+
+
 module.exports = router;

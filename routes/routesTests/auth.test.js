@@ -1,7 +1,6 @@
 const { expect, assert } = require("chai");
 const request = require("supertest");
 
-const db = require("../../db");
 const app = require("../../server");
 
 const checkCredentialErrors = (user, expectedErrorMsg, done) => {
