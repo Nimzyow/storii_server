@@ -15,6 +15,7 @@ module.exports = {
     ecmaVersion: 11,
   },
   rules: {
-    quotes: [2, "double"]
+    quotes: [2, "double"],
+    "consistent-return": 'off'
   },
 };
