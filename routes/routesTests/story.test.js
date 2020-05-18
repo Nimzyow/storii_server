@@ -6,20 +6,20 @@ const app = require("../../server");
 const { createNewCustomUser } = require("./customTestCommands.test");
 
 describe.only("storii routes", () => {
+  let storii;
+  beforeEach(() => {
+    storii = {
+      owner: "defaultOwner",
+      title: "defaultTitle",
+      description: "defaultDescription",
+      mainGenre: "defaultGenre",
+    };
+  });
   describe("Creation errors", () => {
-    let story;
-    beforeEach(() => {
-      story = {
-        owner: "defaultOwner",
-        title: "defaultTitle",
-        description: "defaultDescription",
-        mainGenre: "defaultGenre",
-      };
-    });
     it("for no title", (done) => {
       db.cleanDatabase();
-      story.title = "";
-      // post for new story with no title
+      storii.title = "";
+      // post for new storii with no title
       const expectedErrorMsg = [
         {
           location: "body",
@@ -36,7 +36,7 @@ describe.only("storii routes", () => {
             "Content-Type": "application/json",
             "x-auth-token": token,
           })
-          .send(story)
+          .send(storii)
           .end((err, res) => {
             if (err) {
               assert.fail(0, 1, "Did not fail an expected fail");
@@ -50,8 +50,8 @@ describe.only("storii routes", () => {
     });
     it("for no mainGenre", (done) => {
       db.cleanDatabase();
-      story.mainGenre = "";
-      // post for new story with no title
+      storii.mainGenre = "";
+      // post for new storii with no title
       const expectedErrorMsg = [
         {
           location: "body",
@@ -68,7 +68,7 @@ describe.only("storii routes", () => {
             "Content-Type": "application/json",
             "x-auth-token": token,
           })
-          .send(story)
+          .send(storii)
           .end((err, res) => {
             if (err) {
               assert.fail(0, 1, "Did not fail an expected fail");
@@ -81,9 +81,27 @@ describe.only("storii routes", () => {
       createNewCustomUser(callback);
     });
   });
-  describe.skip("POST story", () => {
-    it("", () => {
-
+  describe("POST storii", () => {
+    it("is successful", (done) => {
+      db.cleanDatabase();
+      const callback = (token) => {
+        request(app)
+          .post("/storii")
+          .set({
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          })
+          .send(storii)
+          .end((err, res) => {
+            if (err) {
+              assert.fail(0, 1, "Did not fail an expected fail");
+            }
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.storii).to.deep.equal("");
+            done();
+          });
+      };
+      createNewCustomUser(callback);
     });
     it("", () => {
 
