@@ -46,7 +46,14 @@ router.post("/",
         },
       };
 
-      return tokenUtils.generateToken(payload, res);
+      const handleToken = (token) => {
+        if (!token) {
+          return res.status(501).json({ msg: "Token generation failed" });
+        }
+        return res.json({ token });
+      };
+
+      tokenUtils.generateToken(payload, handleToken);
     } catch (err) {
       console.error(err);
       res.status(500).status("server error");

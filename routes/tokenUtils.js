@@ -2,12 +2,12 @@
 const jwt = require("jsonwebtoken");
 const config = require("../.config");
 
-const generateToken = (payload, res) => {
+const generateToken = (payload, handleToken) => {
   jwt.sign(payload, config.jwtSecret, { expiresIn: 360000 }, (err, token) => {
     if (err) {
-      return res.status(501).json({ msg: "Token generator failed" });
+      return false;
     }
-    return res.json({ token });
+    handleToken(token);
   });
 };
 
