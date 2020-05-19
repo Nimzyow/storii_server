@@ -41,7 +41,7 @@ router.post("/", [
 router.get("/:id", async (req, res) => {
   try {
     const storii = await Storii.findById(req.params.id);
-    if (storii === null) {
+    if (!storii) {
       return res.status(404).json({ msg: "Page not found" });
     }
     return res.json(storii);
@@ -51,16 +51,22 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// router.delete("/:id", auth, async (req, res) => {
-//   try {
-//     // check to see if that id exists in db
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    // check to see if that id exists in db
+    const storii = await Storii.findById(req.params.id);
+    // if not, status(400)
+    if (!storii) {
+      return res.status(404).json({ msg: "Page not found" });
+    }
+    // if it exists, run findbyidanddelete
+    await Storii.findByIdAndRemove(req.params.id);
 
-//     // if not, status(400)
-
-//     // if it exists, run findbyidanddelete
-//   } catch (err) {
-
-//   }
-// });
+    return res.json({ msg: "Storii removed" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
 
 module.exports = router;

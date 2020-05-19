@@ -134,7 +134,7 @@ describe("storii routes", () => {
   describe("DELETE storii", () => {
     it("is successful if user is the owner", async () => {
       const user = createDBUser(defaultUser);
-      const token = tokenUtils.generateToken(user.id);
+      const token = await tokenUtils.generateToken(user.id);
 
       const storiiRes = await request(app)
         .post("/storii")
@@ -143,17 +143,16 @@ describe("storii routes", () => {
           "x-auth-token": token,
         })
         .send(storii);
-
       const response = await request(app)
-        .delete(`/storii/${storiiRes._id}`)
+        .delete(`/storii/${storiiRes.body._id}`)
         .set({
           "Content-Type": "application/json",
           "x-auth-token": token,
         });
 
       expect(response.statusCode).to.equal(200);
-      expect(response.body).to.equal({ msg: "Storii deleted!" });
+      expect(response.body).to.deep.equal({ msg: "Storii removed" });
     });
-    it.skip("is unsuccessful if user is NOT the owner", async () => { });
   });
+  it.skip("is unsuccessful if user is NOT the owner", async () => { });
 });
