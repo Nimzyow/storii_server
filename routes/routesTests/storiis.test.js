@@ -37,7 +37,7 @@ describe("storii routes", () => {
 
       const user = createDBUser(defaultUser);
 
-      const token = await tokenUtils.generateToken("hello");
+      const token = await tokenUtils.generateToken(user.id);
       const response = await request(app)
         .post("/storii")
         .set({
@@ -45,12 +45,13 @@ describe("storii routes", () => {
           "x-auth-token": token,
         })
         .send(storii);
+
       expect(response.statusCode).to.equal(400);
       expect(response.body.errors).to.deep.equal(expectedErrorMsg);
     });
-    it("for no mainGenre", (done) => {
+    it("for no mainGenre", async () => {
       storii.mainGenre = "";
-      // post for new storii with no title
+
       const expectedErrorMsg = [
         {
           location: "body",
@@ -60,24 +61,19 @@ describe("storii routes", () => {
         },
       ];
 
-      const callback = (token) => {
-        request(app)
-          .post("/storii")
-          .set({
-            "Content-Type": "application/json",
-            "x-auth-token": token,
-          })
-          .send(storii)
-          .end((err, res) => {
-            if (err) {
-              assert.fail(0, 1, "Unexpected fail");
-            }
-            expect(res.statusCode).to.equal(400);
-            expect(res.body.errors).to.deep.equal(expectedErrorMsg);
-            done();
-          });
-      };
-      createNewCustomUser(callback);
+      const user = createDBUser(defaultUser);
+      const token = await tokenUtils.generateToken(user.id);
+
+      const response = await request(app)
+        .post("/storii")
+        .set({
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        })
+        .send(storii);
+
+      expect(response.statusCode).to.equal(400);
+      expect(response.body.errors).to.deep.equal(expectedErrorMsg);
     });
   });
   describe("POST storii", () => {
