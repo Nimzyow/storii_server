@@ -1,5 +1,6 @@
 const { expect, assert } = require("chai");
 const request = require("supertest");
+const { createDBUser } = require("./customTestCommands.test");
 
 const app = require("../../server");
 
@@ -85,6 +86,9 @@ describe("users routes", () => {
     });
 
     it("existing user error response", (done) => {
+      // arrange: make a user
+      createDBUser(newUser);
+
       request(app)
         .post("/users")
         .send(newUser)

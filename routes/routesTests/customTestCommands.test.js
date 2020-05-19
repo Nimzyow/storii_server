@@ -1,6 +1,8 @@
 const request = require("supertest");
 
 const app = require("../../server");
+const User = require("../../models/User");
+const passwordUtils = require("../passwordUtils");
 
 // @ params: user options:
 // user = { penName, email, password} STRINGS
@@ -68,7 +70,21 @@ const createNewStorii = (token, callback, storii) => {
     });
 };
 
+const createDBUser = async (userDetails) => {
+  const encryptedPassword = await passwordUtils.encrypt(userDetails.password);
+
+  const userToSave = new User({
+    ...userDetails,
+    password: encryptedPassword,
+  });
+
+  const user = await userToSave.save();
+  return user;
+};
+
+
 module.exports = {
   createNewCustomUser,
   createNewStorii,
+  createDBUser,
 };

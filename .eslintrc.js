@@ -17,6 +17,7 @@ module.exports = {
   rules: {
     quotes: [2, "double"],
     "consistent-return": 'off',
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "no-console": ["error", { allow: ["warn", "error"] }]
   },
 };
