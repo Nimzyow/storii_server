@@ -1,8 +1,8 @@
-const { expect, assert } = require("chai");
+const { expect } = require("chai");
 const request = require("supertest");
 
 const app = require("../../server");
-const { createNewCustomUser, createNewStorii, createDBUser } = require("./customTestCommands.test");
+const { createDBUser } = require("./customTestCommands.test");
 const tokenUtils = require("../tokenUtils");
 
 describe("storii routes", () => {
@@ -77,28 +77,24 @@ describe("storii routes", () => {
     });
   });
   describe("POST storii", () => {
-    it("is successful", (done) => {
-      const callback = (token) => {
-        request(app)
-          .post("/storii")
-          .set({
-            "Content-Type": "application/json",
-            "x-auth-token": token,
-          })
-          .send(storii)
-          .end((err, res) => {
-            if (err) {
-              assert.fail(0, 1, "Unexpected fail");
-            }
+    it("is successful", async () => {
+      const user = createDBUser(defaultUser);
 
-            expect(res.statusCode).to.equal(200);
-            expect(res.body.owner).to.be.a("string");
-            expect(res.body.title).to.equal(storii.title);
-            expect(res.body.mainGenre).to.equal(storii.mainGenre);
-            done();
-          });
-      };
-      createNewCustomUser(callback);
+      const token = await tokenUtils.generateToken(user.id);
+
+      const response = await request(app)
+        .post("/storii")
+        .set({
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        })
+        .send(storii);
+
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.body.owner).to.be.a("string");
+      expect(response.body.title).to.equal(storii.title);
+      expect(response.body.mainGenre).to.equal(storii.mainGenre);
     });
   });
 
@@ -115,6 +111,7 @@ describe("storii routes", () => {
           "x-auth-token": token,
         })
         .send(storii);
+
       const response = await request(app)
         .get(`/storii/${storiiRes.body._id}`);
 
@@ -123,42 +120,40 @@ describe("storii routes", () => {
       expect(response.body.entries).to.deep.equal([]);
     });
 
-    it("not found", (done) => {
+    it("not found", async () => {
       const unfoundObjectId = "507f1f77bcf86dd799439011";
-      request(app)
-        .get(`/storii/${unfoundObjectId}`)
-        .end((err, res) => {
-          if (err) {
-            assert.fail(0, 1, "Unexpected fail");
-          }
-          expect(res.statusCode).to.equal(404);
-          expect(res.body).to.deep.equal({ msg: "Page not found" });
-          done();
-        });
+
+      const response = await request(app)
+        .get(`/storii/${unfoundObjectId}`);
+
+      expect(response.statusCode).to.equal(404);
+      expect(response.body).to.deep.equal({ msg: "Page not found" });
     });
   });
-  describe.skip("DELETE storii", () => {
-    it("is successful", (done) => {
-      const callback = (token, storiiRes) => {
-        request(app)
-          .delete(`/storii/${storiiRes._id}`)
-          .set({
-            "Content-Type": "application/json",
-            "x-auth-token": token,
-          })
-          .end((err, res) => {
-            if (err) {
-              assert.fail(0, 1, "Unexpected fail");
-            }
-            expect(res.statusCode).to.equal(200);
-            expect(res.body).to.equal({ msg: "Storii deleted!" });
-            done();
-          });
-      };
 
-      createNewCustomUser((token) => {
-        createNewStorii(token, callback);
-      });
+  describe("DELETE storii", () => {
+    it("is successful if user is the owner", async () => {
+      const user = createDBUser(defaultUser);
+      const token = tokenUtils.generateToken(user.id);
+
+      const storiiRes = await request(app)
+        .post("/storii")
+        .set({
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        })
+        .send(storii);
+
+      const response = await request(app)
+        .delete(`/storii/${storiiRes._id}`)
+        .set({
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        });
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.body).to.equal({ msg: "Storii deleted!" });
     });
+    it.skip("is unsuccessful if user is NOT the owner", async () => { });
   });
 });
