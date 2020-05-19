@@ -2,14 +2,14 @@
 const jwt = require("jsonwebtoken");
 const config = require("../.config");
 
-const generateToken = (payload, handleToken) => {
+const generateToken = (payload) => new Promise((resolve, reject) => {
   jwt.sign(payload, config.jwtSecret, { expiresIn: 360000 }, (err, token) => {
     if (err) {
-      return false;
+      reject(err);
     }
-    handleToken(token);
+    resolve(token);
   });
-};
+});
 
 const verifyToken = (token) => jwt.verify(token, config.jwtSecret);
 
