@@ -103,35 +103,26 @@ describe("storii routes", () => {
   });
 
   describe("GET storii", () => {
-    it("is successful", (done) => {
-      // MAKE CUSTOM FUNCTION:
-      const callback = (token) => {
-        request(app)
-          .post("/storii")
-          .set({
-            "Content-Type": "application/json",
-            "x-auth-token": token,
-          })
-          .send(storii)
-          .end((storyErr, storiiRes) => {
-            if (storyErr) {
-              assert.fail(0, 1, "Unexpected fail");
-            }
-            request(app)
-              .get(`/storii/${storiiRes.body._id}`)
-              .end((err, res) => {
-                if (err) {
-                  assert.fail(0, 1, "Unexpected fail");
-                }
-                expect(res.body.title).to.equal(storii.title);
-                expect(res.body.mainGenre).to.equal(storii.mainGenre);
-                expect(res.body.entries).to.deep.equal([]);
-                done();
-              });
-          });
-      };
-      createNewCustomUser(callback);
+    it("is successful", async () => {
+      const user = createDBUser(defaultUser);
+
+      const token = await tokenUtils.generateToken(user.id);
+
+      const storiiRes = await request(app)
+        .post("/storii")
+        .set({
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        })
+        .send(storii);
+      const response = await request(app)
+        .get(`/storii/${storiiRes.body._id}`);
+
+      expect(response.body.title).to.equal(storii.title);
+      expect(response.body.mainGenre).to.equal(storii.mainGenre);
+      expect(response.body.entries).to.deep.equal([]);
     });
+
     it("not found", (done) => {
       const unfoundObjectId = "507f1f77bcf86dd799439011";
       request(app)
