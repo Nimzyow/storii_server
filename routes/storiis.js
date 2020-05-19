@@ -51,4 +51,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// router.delete("/:id", auth, async (req, res) => {
+//   try {
+//     // check to see if that id exists in db
+
+//     // if not, status(400)
+
+//     // if it exists, run findbyidanddelete
+//   } catch (err) {
+
+//   }
+// });
+
 module.exports = router;

@@ -149,7 +149,7 @@ describe("storii routes", () => {
         });
     });
   });
-  describe.only("DELETE storii", () => {
+  describe.skip("DELETE storii", () => {
     it("is successful", (done) => {
       const callback = (token, storiiRes) => {
         request(app)

@@ -1,6 +1,4 @@
-const jwt = require("jsonwebtoken");
-const config = require("../.config");
-
+const tokenUtils = require("../routes/tokenUtils");
 
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
@@ -10,7 +8,7 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, config.jwtSecret);
+    const decoded = tokenUtils.verifyToken(token);
 
     req.user = decoded.user;
 
