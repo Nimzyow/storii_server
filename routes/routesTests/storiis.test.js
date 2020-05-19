@@ -154,5 +154,32 @@ describe("storii routes", () => {
       expect(response.body).to.deep.equal({ msg: "Storii removed" });
     });
   });
-  it.skip("is unsuccessful if user is NOT the owner", async () => { });
+  it.only("is unsuccessful if user is NOT the owner", async () => {
+    const secondUser = {
+      ...defaultUser,
+      email: "secondUser@second.com",
+    };
+    const owner = createDBUser(defaultUser);
+    const user = createDBUser(secondUser);
+
+    const ownerToken = await tokenUtils.generateToken(owner.id);
+    const userToken = await tokenUtils.generateToken(user.id);
+
+    const storiiRes = await request(app)
+      .post("/storii")
+      .set({
+        "Content-Type": "application/json",
+        "x-auth-token": ownerToken,
+      })
+      .send(storii);
+
+    const response = await request(app)
+      .delete(`/storii/${storiiRes.body._id}`)
+      .set({
+        "Content-Type": "application/json",
+        "x-auth-token": userToken,
+      });
+    expect(response.statusCode).to.equal(401);
+    expect(response.body).to.deep.equal({ msg: "User not authorized to delete this storii" });
+  });
 });
