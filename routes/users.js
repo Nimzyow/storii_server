@@ -40,14 +40,8 @@ router.post("/",
 
       user = await userToSave.save();
 
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
       try {
-        const token = await tokenUtils.generateToken(payload);
+        const token = await tokenUtils.generateToken(user.id);
         return res.json({ token });
       } catch (error) {
         console.error(error);

@@ -51,15 +51,14 @@ router.post(
         return res.status(401).json({ msg: "Incorrect password" });
       }
 
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      return tokenUtils.generateToken(payload, res);
+      try {
+        const token = await tokenUtils.generateToken(user.id);
+        return res.json({ token });
+      } catch (error) {
+        console.error(error);
+        res.statusCode(501).json({ msg: "Token generation failed" });
+      }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error(err.message);
       return res.status(500).send("Connection error");
     }

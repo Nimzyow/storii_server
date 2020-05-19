@@ -2,10 +2,12 @@ const { expect, assert } = require("chai");
 const request = require("supertest");
 
 const app = require("../../server");
-const { createNewCustomUser, createNewStorii } = require("./customTestCommands.test");
+const { createNewCustomUser, createNewStorii, createDBUser } = require("./customTestCommands.test");
+const tokenUtils = require("../tokenUtils");
 
 describe("storii routes", () => {
   let storii;
+  let defaultUser;
   beforeEach(() => {
     storii = {
       owner: "defaultOwner",
@@ -13,10 +15,15 @@ describe("storii routes", () => {
       description: "defaultDescription",
       mainGenre: "defaultGenre",
     };
+    defaultUser = {
+      penName: "defaultTestUser",
+      email: "defaultTestUser@test.com",
+      password: "defaultTestPassword",
+    };
   });
 
   describe("Creation errors", () => {
-    it("for no title", (done) => {
+    it("for no title", async () => {
       storii.title = "";
 
       const expectedErrorMsg = [
@@ -28,24 +35,18 @@ describe("storii routes", () => {
         },
       ];
 
-      const callback = (token) => {
-        request(app)
-          .post("/storii")
-          .set({
-            "Content-Type": "application/json",
-            "x-auth-token": token,
-          })
-          .send(storii)
-          .end((err, res) => {
-            if (err) {
-              assert.fail(0, 1, "Unexpected fail");
-            }
-            expect(res.statusCode).to.equal(400);
-            expect(res.body.errors).to.deep.equal(expectedErrorMsg);
-            done();
-          });
-      };
-      createNewCustomUser(callback);
+      const user = createDBUser(defaultUser);
+
+      const token = await tokenUtils.generateToken("hello");
+      const response = await request(app)
+        .post("/storii")
+        .set({
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        })
+        .send(storii);
+      expect(response.statusCode).to.equal(400);
+      expect(response.body.errors).to.deep.equal(expectedErrorMsg);
     });
     it("for no mainGenre", (done) => {
       storii.mainGenre = "";
