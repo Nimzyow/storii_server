@@ -7,17 +7,17 @@ const tokenUtils = require("../tokenUtils");
 
 describe("storii routes", () => {
   let storii;
-  let defaultUser;
+  let secondaryUser;
   beforeEach(() => {
     storii = {
       title: "defaultTitle",
       description: "defaultDescription",
       mainGenre: "defaultGenre",
     };
-    defaultUser = {
-      penName: "defaultTestUser",
-      email: "defaultTestUser@test.com",
-      password: "defaultTestPassword",
+    secondaryUser = {
+      penName: "second",
+      email: "secondUser@second.com",
+      password: "654321",
     };
   });
 
@@ -34,7 +34,7 @@ describe("storii routes", () => {
         },
       ];
 
-      const user = createDBUser(defaultUser);
+      const user = await createDBUser();
 
       const token = await tokenUtils.generateToken(user.id);
       const response = await request(app)
@@ -60,7 +60,7 @@ describe("storii routes", () => {
         },
       ];
 
-      const user = await createDBUser(defaultUser);
+      const user = await createDBUser();
       const token = await tokenUtils.generateToken(user.id);
 
       const response = await request(app)
@@ -77,7 +77,7 @@ describe("storii routes", () => {
   });
   describe("POST storii", () => {
     it("is successful", async () => {
-      const user = await createDBUser(defaultUser);
+      const user = await createDBUser();
 
       const token = await tokenUtils.generateToken(user.id);
 
@@ -99,7 +99,7 @@ describe("storii routes", () => {
 
   describe("GET storii", () => {
     it("is successful", async () => {
-      const user = await createDBUser(defaultUser);
+      const user = await createDBUser();
 
       const token = await tokenUtils.generateToken(user.id);
 
@@ -132,7 +132,7 @@ describe("storii routes", () => {
 
   describe("DELETE storii", () => {
     it("is successful if user is the owner", async () => {
-      const user = await createDBUser(defaultUser);
+      const user = await createDBUser();
       const token = await tokenUtils.generateToken(user.id);
       const existingStorii = await createDBStorii(user.id, storii);
 
@@ -148,12 +148,8 @@ describe("storii routes", () => {
     });
   });
   it("is unsuccessful if user is NOT the owner", async () => {
-    const secondUser = {
-      ...defaultUser,
-      email: "secondUser@second.com",
-    };
-    const owner = await createDBUser(defaultUser);
-    const user = await createDBUser(secondUser);
+    const owner = await createDBUser();
+    const user = await createDBUser(secondaryUser);
     const existingStorii = await createDBStorii(owner.id, storii);
 
     const userToken = await tokenUtils.generateToken(user.id);
