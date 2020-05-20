@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const request = require("supertest");
 
 const app = require("../../server");
-const { createDBUser } = require("./customTestCommands.test");
+const { createDBUser, createDBStorii } = require("./customTestCommands.test");
 const tokenUtils = require("../tokenUtils");
 
 describe("storii routes", () => {
@@ -134,16 +134,10 @@ describe("storii routes", () => {
     it("is successful if user is the owner", async () => {
       const user = await createDBUser(defaultUser);
       const token = await tokenUtils.generateToken(user.id);
+      const existingStorii = await createDBStorii(user.id, storii);
 
-      const storiiRes = await request(app)
-        .post("/storii")
-        .set({
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        })
-        .send(storii);
       const response = await request(app)
-        .delete(`/storii/${storiiRes.body._id}`)
+        .delete(`/storii/${existingStorii.id}`)
         .set({
           "Content-Type": "application/json",
           "x-auth-token": token,
@@ -160,20 +154,12 @@ describe("storii routes", () => {
     };
     const owner = await createDBUser(defaultUser);
     const user = await createDBUser(secondUser);
+    const existingStorii = await createDBStorii(owner.id, storii);
 
-    const ownerToken = await tokenUtils.generateToken(owner.id);
     const userToken = await tokenUtils.generateToken(user.id);
 
-    const storiiRes = await request(app)
-      .post("/storii")
-      .set({
-        "Content-Type": "application/json",
-        "x-auth-token": ownerToken,
-      })
-      .send(storii);
-
     const response = await request(app)
-      .delete(`/storii/${storiiRes.body._id}`)
+      .delete(`/storii/${existingStorii.id}`)
       .set({
         "Content-Type": "application/json",
         "x-auth-token": userToken,
