@@ -1,5 +1,6 @@
 const User = require("../../models/User");
 const Storii = require("../../models/Storii");
+const Entry = require("../../models/Entry");
 const passwordUtils = require("../passwordUtils");
 
 const createDBUser = async (userDetails) => {
@@ -34,7 +35,21 @@ const createDBStorii = async (userId, storiiDetails) => {
   return storii;
 };
 
+const createDBEntry = async (writer, storiiId, content) => {
+  const entryToCreate = {
+    writer,
+    storiiId,
+    content: content || "I like ow",
+  };
+
+  const entryToSave = new Entry({ ...entryToCreate });
+  const entry = await entryToSave.save();
+
+  return entry;
+};
+
 module.exports = {
   createDBUser,
   createDBStorii,
+  createDBEntry,
 };
