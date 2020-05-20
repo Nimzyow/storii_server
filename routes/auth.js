@@ -1,11 +1,10 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
-const config = require("../.config.js");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
+const tokenUtils = require("./tokenUtils");
+const passwordUtils = require("./passwordUtils");
 
 const router = express.Router();
 
@@ -19,7 +18,7 @@ router.get("/", auth, async (req, res) => {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err.message);
-    return res.status(401).json({ msg: "You need to sign in!" });
+    return res.status(401).json({ msg: "You need to sign in!!!!" });
   }
 });
 
@@ -46,25 +45,20 @@ router.post(
       if (!user) {
         return res.status(401).json({ msg: "Invalid credentials" });
       }
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await passwordUtils.compare(password, user.password);
+
       if (!isMatch) {
         return res.status(401).json({ msg: "Incorrect password" });
       }
 
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      jwt.sign(payload, config.jwtSecret, { expiresIn: 360000 }, (err, token) => {
-        if (err) {
-          return res.status(501).json({ msg: "Token generator failed" });
-        }
+      try {
+        const token = await tokenUtils.generateToken(user.id);
         return res.json({ token });
-      });
+      } catch (error) {
+        console.error(error);
+        res.statusCode(501).json({ msg: "Token generation failed" });
+      }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error(err.message);
       return res.status(500).send("Connection error");
     }

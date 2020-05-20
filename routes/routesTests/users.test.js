@@ -1,7 +1,7 @@
 const { expect, assert } = require("chai");
 const request = require("supertest");
+const { createDBUser } = require("./customTestCommands.test");
 
-const db = require("../../db");
 const app = require("../../server");
 
 const checkCredentialErrors = (newUser, expectedErrorMsg, done) => {
@@ -10,7 +10,7 @@ const checkCredentialErrors = (newUser, expectedErrorMsg, done) => {
     .send(newUser)
     .end((err, res) => {
       if (err) {
-        assert.fail(0, 1, "Did not fail an expected fail");
+        assert.fail(0, 1, "Unexpected fail");
       }
       expect(res.statusCode).to.equal(400);
       expect(res.body.errors).to.deep.equal(expectedErrorMsg);
@@ -22,8 +22,7 @@ describe("users routes", () => {
   describe("POST new user", () => {
     let newUser;
 
-    beforeEach(() => {
-      db.cleanDatabase();
+    beforeEach(async () => {
       newUser = {
         email: "test@test.com",
         penName: "notGoodPenName",
@@ -78,7 +77,7 @@ describe("users routes", () => {
         .set("Content-Type", "application/json")
         .end((err, res) => {
           if (err) {
-            assert.fail(0, 1, "Did not fail an expected fail");
+            assert.fail(0, 1, "Unexpected fail");
           }
           expect(res.statusCode).to.equal(200);
           expect(res.body.token).to.be.a("string");
@@ -87,13 +86,16 @@ describe("users routes", () => {
     });
 
     it("existing user error response", (done) => {
+      // arrange: make a user
+      createDBUser(newUser);
+
       request(app)
         .post("/users")
         .send(newUser)
         .set("Content-Type", "application/json")
         .end((err) => {
           if (err) {
-            assert.fail(0, 1, "Did not fail an expected fail");
+            assert.fail(0, 1, "Unexpected fail");
           }
           request(app)
             .post("/users")
@@ -101,7 +103,7 @@ describe("users routes", () => {
             .set("Content-Type", "application/json")
             .end((error, res) => {
               if (error) {
-                assert.fail(0, 1, "Did not fail an expected fail");
+                assert.fail(0, 1, "Unexpected fail");
               }
               expect(res.statusCode).to.equal(401);
               done();

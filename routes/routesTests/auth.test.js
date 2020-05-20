@@ -1,7 +1,6 @@
 const { expect, assert } = require("chai");
 const request = require("supertest");
 
-const db = require("../../db");
 const app = require("../../server");
 
 const checkCredentialErrors = (user, expectedErrorMsg, done) => {
@@ -10,7 +9,7 @@ const checkCredentialErrors = (user, expectedErrorMsg, done) => {
     .send(user)
     .end((err, res) => {
       if (err) {
-        assert.fail(0, 1, "Did not fail an expected fail");
+        assert.fail(0, 1, "Unexpected fail");
       }
       expect(res.statusCode).to.equal(400);
       expect(res.body.errors).to.deep.equal(expectedErrorMsg);
@@ -23,7 +22,6 @@ describe("auth routes", () => {
     let user;
 
     beforeEach(() => {
-      db.cleanDatabase();
       user = {
         email: "user@test.com",
         password: "existingPassword",
@@ -66,7 +64,7 @@ describe("auth routes", () => {
         .send(user)
         .end((err, res) => {
           if (err) {
-            assert.fail(0, 1, "Did not fail an expected fail");
+            assert.fail(0, 1, "Unexpected fail");
           }
           expect(res.statusCode).to.equal(401);
           expect(res.body.msg).to.deep.equal(expectedMessage);
@@ -89,7 +87,7 @@ describe("auth routes", () => {
             .send(user)
             .end((err, res) => {
               if (err) {
-                assert.fail(0, 1, "Did not fail an expected fail");
+                assert.fail(0, 1, "Unexpected fail");
               }
               expect(res.statusCode).to.equal(401);
               expect(res.body.msg).to.deep.equal(expectedMessage);

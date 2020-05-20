@@ -1,10 +1,9 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
-const config = require("../.config.js");
 const User = require("../models/User");
+const tokenUtils = require("./tokenUtils");
+const passwordUtils = require("./passwordUtils");
 
 const router = express.Router();
 
@@ -17,7 +16,6 @@ router.post("/",
     check("penName", "Please enter a pen name").exists(),
     check("email", "Please enter an email").isEmail(),
     check("password", "Please enter a password").exists(),
-  // eslint-disable-next-line consistent-return
   ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -32,9 +30,8 @@ router.post("/",
         return res.status(401).json({ msg: "email already exists" });
       }
 
-      const salt = await bcrypt.genSalt(10);
 
-      const encyptedPassword = await bcrypt.hash(password, salt);
+      const encyptedPassword = await passwordUtils.encrypt(password);
 
       const userToSave = new User({
         ...req.body,
@@ -43,20 +40,14 @@ router.post("/",
 
       user = await userToSave.save();
 
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      jwt.sign(payload, config.jwtSecret, { expiresIn: 360000 }, (err, token) => {
-        if (err) {
-          return res.status(501).json({ msg: "Token generator failed" });
-        }
+      try {
+        const token = await tokenUtils.generateToken(user.id);
         return res.json({ token });
-      });
+      } catch (error) {
+        console.error(error);
+        res.statusCode(501).json({ msg: "Token generation failed" });
+      }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error(err);
       res.status(500).status("server error");
     }
