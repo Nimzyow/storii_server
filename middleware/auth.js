@@ -9,7 +9,6 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = tokenUtils.verifyToken(token);
-
     req.user = decoded.user;
 
     next();

@@ -12,7 +12,6 @@ const router = express.Router();
 router.post("/", [
   auth,
   [
-    check("owner", "Owner required").exists(),
     check("title", "A Storii needs a title")
       .notEmpty(),
     check("mainGenre", "A Storii needs a main genre").notEmpty()],
@@ -23,7 +22,7 @@ router.post("/", [
   }
 
   try {
-    const storii = new Storii({ ...req.body });
+    const storii = new Storii({ ...req.body, owner: req.user.id });
 
     const savedStorii = await storii.save();
 
@@ -53,13 +52,15 @@ router.get("/:id", async (req, res) => {
 
 router.delete("/:id", auth, async (req, res) => {
   try {
-    // check to see if that id exists in db
     const storii = await Storii.findById(req.params.id);
-    // if not, status(400)
     if (!storii) {
       return res.status(404).json({ msg: "Page not found" });
     }
-    // if it exists, run findbyidanddelete
+
+    if (storii.owner.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "User not authorized to delete this storii" });
+    }
+
     await Storii.findByIdAndRemove(req.params.id);
 
     return res.json({ msg: "Storii removed" });

@@ -10,7 +10,6 @@ describe("storii routes", () => {
   let defaultUser;
   beforeEach(() => {
     storii = {
-      owner: "defaultOwner",
       title: "defaultTitle",
       description: "defaultDescription",
       mainGenre: "defaultGenre",
@@ -61,7 +60,7 @@ describe("storii routes", () => {
         },
       ];
 
-      const user = createDBUser(defaultUser);
+      const user = await createDBUser(defaultUser);
       const token = await tokenUtils.generateToken(user.id);
 
       const response = await request(app)
@@ -78,7 +77,7 @@ describe("storii routes", () => {
   });
   describe("POST storii", () => {
     it("is successful", async () => {
-      const user = createDBUser(defaultUser);
+      const user = await createDBUser(defaultUser);
 
       const token = await tokenUtils.generateToken(user.id);
 
@@ -100,7 +99,7 @@ describe("storii routes", () => {
 
   describe("GET storii", () => {
     it("is successful", async () => {
-      const user = createDBUser(defaultUser);
+      const user = await createDBUser(defaultUser);
 
       const token = await tokenUtils.generateToken(user.id);
 
@@ -133,7 +132,7 @@ describe("storii routes", () => {
 
   describe("DELETE storii", () => {
     it("is successful if user is the owner", async () => {
-      const user = createDBUser(defaultUser);
+      const user = await createDBUser(defaultUser);
       const token = await tokenUtils.generateToken(user.id);
 
       const storiiRes = await request(app)
@@ -154,13 +153,13 @@ describe("storii routes", () => {
       expect(response.body).to.deep.equal({ msg: "Storii removed" });
     });
   });
-  it.only("is unsuccessful if user is NOT the owner", async () => {
+  it("is unsuccessful if user is NOT the owner", async () => {
     const secondUser = {
       ...defaultUser,
       email: "secondUser@second.com",
     };
-    const owner = createDBUser(defaultUser);
-    const user = createDBUser(secondUser);
+    const owner = await createDBUser(defaultUser);
+    const user = await createDBUser(secondUser);
 
     const ownerToken = await tokenUtils.generateToken(owner.id);
     const userToken = await tokenUtils.generateToken(user.id);
