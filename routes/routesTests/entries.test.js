@@ -132,6 +132,7 @@ describe("entries route", () => {
       const response = await request(app)
         .patch(`/storii/${existingStorii.id}/entry/${entry.id}`)
         .set({
+          "Content-Type": "application/json",
           "x-auth-token": unknownUserToken,
         })
         .send(patchedContentEntry);
@@ -142,6 +143,42 @@ describe("entries route", () => {
   });
 
   describe("DELETE entry", () => {
+    it("successful", async () => {
+      const existingUser = await createDBUser();
+      const existingStorii = await createDBStorii(existingUser.id);
 
+      const existingUserToken = await tokenUtils.generateToken(existingUser.id);
+
+      const entry = await createDBEntry(existingUser.id, existingStorii.id);
+
+      const response = await request(app)
+        .delete(`/storii/${existingStorii.id}/entry/${entry.id}`)
+        .set("x-auth-token", existingUserToken);
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.body).to.deep.equal({ msg: "Entry deleted" });
+    });
+    it("is unsuccessful if user is NOT the owner/admin", async () => {
+      const secondaryUser = {
+        penName: "second",
+        email: "secondUser@second.com",
+        password: "654321",
+      };
+
+      const existingUser = await createDBUser();
+      const secondUser = await createDBUser(secondaryUser);
+
+      const secondUserToken = await tokenUtils.generateToken(secondUser.id);
+
+      const existingStorii = await createDBStorii(existingUser.id);
+
+      const entry = await createDBEntry(existingUser.id, existingStorii.id);
+
+      const response = await request(app)
+        .delete(`/storii/${existingStorii.id}/entry/${entry.id}`)
+        .set("x-auth-token", secondUserToken);
+
+      expect(response.statusCode).to.equal(401);
+    });
   });
 });
