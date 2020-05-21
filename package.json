@@ -8,7 +8,8 @@
     "server-dev": "NODE_ENV=development nodemon index.js",
     "test": "NODE_ENV=test mocha ./routes/routesTests/*.test.js",
     "coverage": "nyc npm run test",
-    "start": "NODE_ENV=development index.js"
+    "start": "NODE_ENV=development node index.js",
+    "web": "NODE_ENV=development node index.js"
   },
   "engines": {
     "node": "14.1.0"
