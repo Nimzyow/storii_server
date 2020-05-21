@@ -28,6 +28,9 @@ const storiiSchema = new Schema({
   writers: [
     { type: Schema.Types.ObjectId, ref: "User" },
   ],
+  pendingInvitees: [
+    { type: Schema.Types.ObjectId, ref: "User" },
+  ],
   public: {
     type: Boolean,
     default: true,

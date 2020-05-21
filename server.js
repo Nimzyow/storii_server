@@ -9,5 +9,6 @@ app.use(express.json({ extended: false }));
 app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
 app.use("/storii", require("./routes/storiis"));
+app.use("/storii", require("./routes/entries"));
 
 module.exports = app;

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const entrySchema = new Schema({
-  entry: {
+  content: {
     type: String,
     requires: true,
   },
@@ -12,7 +12,7 @@ const entrySchema = new Schema({
     ref: "User",
     required: true,
   },
-  storii: {
+  storiiId: {
     type: Schema.Types.ObjectId,
     ref: "Storii",
     required: true,
