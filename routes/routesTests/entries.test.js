@@ -6,6 +6,15 @@ const { createDBUser, createDBStorii, createDBEntry } = require("./customTestCom
 const tokenUtils = require("../tokenUtils");
 
 describe("entries route", () => {
+  let existingUser;
+  let existingStorii;
+  let existingUserToken;
+
+  beforeEach(async () => {
+    existingUser = await createDBUser();
+    existingStorii = await createDBStorii(existingUser.id);
+    existingUserToken = await tokenUtils.generateToken(existingUser.id);
+  });
   describe("POST entry", () => {
     it("errors for no content", async () => {
       const expectedErrorMsg = [
@@ -16,10 +25,6 @@ describe("entries route", () => {
           value: "",
         },
       ];
-      const existingUser = await createDBUser();
-      const existingStorii = await createDBStorii(existingUser.id);
-
-      const existingUserToken = await tokenUtils.generateToken(existingUser.id);
 
       const entry = {
         content: "",
@@ -38,11 +43,6 @@ describe("entries route", () => {
     });
 
     it("is successful", async () => {
-      const existingUser = await createDBUser();
-      const existingStorii = await createDBStorii(existingUser.id);
-
-      const existingUserToken = await tokenUtils.generateToken(existingUser.id);
-
       const entry = {
         content: "I really enjoy ow",
       };
@@ -62,10 +62,6 @@ describe("entries route", () => {
 
   describe("GET entry", () => {
     it("is successful", async () => {
-      const existingUser = await createDBUser();
-      const existingStorii = await createDBStorii(existingUser.id);
-      const existingUserToken = await tokenUtils.generateToken(existingUser.id);
-
       const entry = await createDBEntry(existingUser.id, existingStorii.id);
 
       const response = await request(app)
@@ -82,18 +78,10 @@ describe("entries route", () => {
   });
 
   describe("PATCH entry", () => {
-    let existingUser;
-    let existingStorii;
-    let existingUserToken;
     let entry;
     let patchedContentEntry;
 
     beforeEach(async () => {
-      existingUser = await createDBUser();
-      existingStorii = await createDBStorii(existingUser.id);
-
-      existingUserToken = await tokenUtils.generateToken(existingUser.id);
-
       entry = await createDBEntry(existingUser.id, existingStorii.id);
 
       patchedContentEntry = {
@@ -144,11 +132,6 @@ describe("entries route", () => {
 
   describe("DELETE entry", () => {
     it("successful", async () => {
-      const existingUser = await createDBUser();
-      const existingStorii = await createDBStorii(existingUser.id);
-
-      const existingUserToken = await tokenUtils.generateToken(existingUser.id);
-
       const entry = await createDBEntry(existingUser.id, existingStorii.id);
 
       const response = await request(app)
@@ -158,6 +141,7 @@ describe("entries route", () => {
       expect(response.statusCode).to.equal(200);
       expect(response.body).to.deep.equal({ msg: "Entry deleted" });
     });
+
     it("is unsuccessful if user is NOT the owner/admin", async () => {
       const secondaryUser = {
         penName: "second",
@@ -165,12 +149,9 @@ describe("entries route", () => {
         password: "654321",
       };
 
-      const existingUser = await createDBUser();
       const secondUser = await createDBUser(secondaryUser);
 
       const secondUserToken = await tokenUtils.generateToken(secondUser.id);
-
-      const existingStorii = await createDBStorii(existingUser.id);
 
       const entry = await createDBEntry(existingUser.id, existingStorii.id);
 
@@ -179,6 +160,7 @@ describe("entries route", () => {
         .set("x-auth-token", secondUserToken);
 
       expect(response.statusCode).to.equal(401);
+      expect(response.body).to.deep.equal({ msg: "Unauthorized user" });
     });
   });
 });

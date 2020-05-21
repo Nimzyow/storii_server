@@ -77,4 +77,20 @@ router.patch("/:id/entry/:entryId", auth, async (req, res) => {
   }
 });
 
+router.delete("/:id/entry/:entryId", auth, async (req, res) => {
+  const isAllowed = await isUserAllowed(req.params.id, req.user.id);
+  if (!isAllowed) {
+    return res.status(401).json({ msg: "Unauthorized user" });
+  }
+
+  try {
+    await Entry.findOneAndRemove({ id: req.params.entryId });
+
+    return res.status(200).json({ msg: "Entry deleted" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
+
 module.exports = router;
