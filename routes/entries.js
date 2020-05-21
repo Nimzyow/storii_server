@@ -37,7 +37,10 @@ router.post("/:id/entry",
 
       await entry.save();
 
-      return res.status(200).json({ msg: "New entry successful!" });
+      return res.status(200).json({
+        msg: "New entry successful!",
+        entry,
+      });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ msg: "Server error" });

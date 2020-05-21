@@ -56,7 +56,8 @@ describe("entries route", () => {
         .send(entry);
 
       expect(response.statusCode).to.equal(200);
-      expect(response.body).to.deep.equal({ msg: "New entry successful!" });
+      expect(response.body.msg).to.equal("New entry successful!");
+      expect(response.body.entry.content).to.equal(entry.content);
     });
   });
 

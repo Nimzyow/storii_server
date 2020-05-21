@@ -28,6 +28,15 @@ const connect = () => {
       console.log(`Connected to ${process.env.NODE_ENV} db`);
     });
   }
+  if (process.env.NODE_ENV === "development") {
+    // eslint-disable-next-line no-console
+    console.log("DEVELOPING! DO NOT INTERUPT HOOMAN");
+    // test
+    return connectDB(config.developmentURI).then(() => {
+      // eslint-disable-next-line no-console
+      console.log(`Connected to ${process.env.NODE_ENV} db`);
+    });
+  }
   if (process.env.NODE_ENV === "production") {
     // eslint-disable-next-line no-console
     console.log("I'm a real boy");
