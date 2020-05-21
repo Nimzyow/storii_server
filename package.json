@@ -4,7 +4,8 @@
   "description": "Storii_server",
   "main": "index.js",
   "scripts": {
-    "server": "NODE_ENV=production nodemon index.js",
+    "server-prod": "NODE_ENV=production nodemon index.js",
+    "server-dev": "NODE_ENV=development nodemon index.js",
     "test": "NODE_ENV=test mocha ./routes/routesTests/*.test.js",
     "coverage": "nyc npm run test"
   },
