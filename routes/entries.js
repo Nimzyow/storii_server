@@ -4,7 +4,20 @@ const { check, validationResult } = require("express-validator");
 const router = express.Router();
 const auth = require("../middleware/auth");
 
+const Storii = require("../models/Storii");
 const Entry = require("../models/Entry");
+
+const isUserAllowed = async (storiiId, userId) => {
+  const storii = await Storii.findById(storiiId);
+
+  const writerIds = storii.writers.map((writer) => writer.id.toString());
+  const allWriters = [storii.owner.toString(), ...writerIds];
+
+  if (allWriters.includes(userId.toString())) {
+    return true;
+  }
+  return false;
+};
 
 router.post("/:id/entry",
   [
@@ -30,5 +43,38 @@ router.post("/:id/entry",
       return res.status(500).json({ msg: "Server error" });
     }
   });
+
+router.get("/:id/entry/:entryId", auth, async (req, res) => {
+  const isAllowed = await isUserAllowed(req.params.id, req.user.id);
+  if (!isAllowed) {
+    return res.status(401).json({ msg: "Unauthorized user" });
+  }
+
+  try {
+    const entry = await Entry.findById(req.params.entryId);
+
+    return res.status(200).json({ entry });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
+
+
+router.patch("/:id/entry/:entryId", auth, async (req, res) => {
+  const isAllowed = await isUserAllowed(req.params.id, req.user.id);
+  if (!isAllowed) {
+    return res.status(401).json({ msg: "Unauthorized user" });
+  }
+
+  try {
+    await Entry.findOneAndUpdate({ id: req.params.entryId }, req.body);
+
+    return res.status(200).json({ msg: "Entry updated successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
 
 module.exports = router;

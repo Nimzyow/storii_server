@@ -60,43 +60,85 @@ describe("entries route", () => {
     });
   });
 
-  describe("GET entry", async () => {
-    const existingUser = await createDBUser();
-    const existingStorii = await createDBStorii(existingUser.id);
-    const existingUserToken = await tokenUtils.generateToken(existingUser.id);
+  describe("GET entry", () => {
+    it("is successful", async () => {
+      const existingUser = await createDBUser();
+      const existingStorii = await createDBStorii(existingUser.id);
+      const existingUserToken = await tokenUtils.generateToken(existingUser.id);
 
-    const entry = await createDBEntry(existingUser.id, existingStorii.id);
+      const entry = await createDBEntry(existingUser.id, existingStorii.id);
 
-    const response = await request(app)
-      .get(`/storii/${existingStorii.id}/entry`)
-      .set({
-        "x-auth-token": existingUserToken,
-      });
+      const response = await request(app)
+        .get(`/storii/${existingStorii.id}/entry/${entry.id}`)
+        .set({
+          "x-auth-token": existingUserToken,
+        });
 
-    expect(response.statusCode).to.equal(200);
-    expect(response.body).to.deep.equal(entry);
+      expect(response.statusCode).to.equal(200);
+      expect(response.body.entry.content).to.equal(entry.content);
+      expect(response.body.entry.writer).to.equal(entry.writer.toString());
+      expect(response.body.entry.storiiId).to.equal(entry.storiiId.toString());
+    });
   });
 
-  describe("PATCH entry", async () => {
-    const existingUser = await createDBUser();
-    const existingStorii = await createDBStorii(existingUser.id);
-    const existingUserToken = await tokenUtils.generateToken(existingUser.id);
+  describe("PATCH entry", () => {
+    let existingUser;
+    let existingStorii;
+    let existingUserToken;
+    let entry;
+    let patchedContentEntry;
 
-    const entry = await createDBEntry(existingUser.id, existingStorii.id);
+    beforeEach(async () => {
+      existingUser = await createDBUser();
+      existingStorii = await createDBStorii(existingUser.id);
 
-    const patchedContentEntry = {
-      content: "This has been patched",
-    };
+      existingUserToken = await tokenUtils.generateToken(existingUser.id);
 
-    const response = await request(app)
-      .patch(`/storii/${existingStorii.id}/entry/${entry.id}`)
-      .set({
-        "x-auth-token": existingUserToken,
-      })
-      .send(patchedContentEntry);
+      entry = await createDBEntry(existingUser.id, existingStorii.id);
 
-    expect(response.statusCode).to.equal(200);
-    expect(response.body).to.deep.equal(patchedContentEntry);
+      patchedContentEntry = {
+        content: "This has been patched",
+      };
+    });
+    it("is successful", async () => {
+      const expectedResult = {
+        msg: "Entry updated successfully",
+      };
+
+      const response = await request(app)
+        .patch(`/storii/${existingStorii.id}/entry/${entry.id}`)
+        .set({
+          "x-auth-token": existingUserToken,
+        })
+        .send(patchedContentEntry);
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.body).to.deep.equal(expectedResult);
+    });
+
+    it("is unsuccessful if not part of the storii", async () => {
+      const unknownUser = await createDBUser({
+        penName: "IdoNotBelongHERE",
+        email: "doNotLetMeWrite@Here.com",
+        password: "WAHT?",
+      });
+
+      const unknownUserToken = await tokenUtils.generateToken(unknownUser.id);
+
+      const expectedResult = {
+        msg: "Unauthorized user",
+      };
+
+      const response = await request(app)
+        .patch(`/storii/${existingStorii.id}/entry/${entry.id}`)
+        .set({
+          "x-auth-token": unknownUserToken,
+        })
+        .send(patchedContentEntry);
+
+      expect(response.statusCode).to.equal(401);
+      expect(response.body).to.deep.equal(expectedResult);
+    });
   });
 
   describe("DELETE entry", () => {
