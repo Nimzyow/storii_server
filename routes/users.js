@@ -30,7 +30,7 @@ router.post(
     try {
       let user = await User.findOne({ email });
       if (user) {
-        return res.json({ msg: "email already exists", status: 401 });
+        res.status(401).json({ msg: "email already exists" });
       }
 
       const encyptedPassword = await passwordUtils.encrypt(password);

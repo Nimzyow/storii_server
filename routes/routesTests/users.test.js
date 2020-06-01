@@ -106,7 +106,7 @@ describe("users routes", () => {
                 assert.fail(0, 1, "Unexpected fail");
               }
 
-              expect(res.body.status).to.equal(401);
+              expect(res.statusCode).to.equal(401);
               expect(res.body.msg).to.equal("email already exists");
               done();
             });
