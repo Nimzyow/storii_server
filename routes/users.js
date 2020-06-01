@@ -12,12 +12,14 @@ const router = express.Router();
 // @desc   Registers a new user
 // @access Public
 
-router.post("/",
+router.post(
+  "/",
   [
     check("penName", "Please enter a pen name").exists(),
     check("email", "Please enter an email").isEmail(),
     check("password", "Please enter a password").exists(),
-  ], async (req, res) => {
+  ],
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -28,9 +30,8 @@ router.post("/",
     try {
       let user = await User.findOne({ email });
       if (user) {
-        return res.status(401).json({ msg: "email already exists" });
+        return res.json({ msg: "email already exists", status: 401 });
       }
-
 
       const encyptedPassword = await passwordUtils.encrypt(password);
 
@@ -48,10 +49,7 @@ router.post("/",
         const storii = await Storii.findById("5ec66337ac935260a11e1388");
 
         await storii.updateOne({
-          writers: [
-            ...storii.writers,
-            user.id,
-          ],
+          writers: [...storii.writers, user.id],
         });
       }
       // /end of hacky
@@ -67,6 +65,8 @@ router.post("/",
       console.error(err);
       res.status(500).status("server error");
     }
-  });
+    // eslint-disable-next-line comma-dangle
+  },
+);
 
 module.exports = router;
