@@ -16,7 +16,6 @@ const connectDB = async (uri) => {
   }
 };
 
-
 const connect = () => {
   if (process.env.NODE_ENV === "test") {
     // eslint-disable-next-line no-console
