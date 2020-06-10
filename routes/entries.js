@@ -19,11 +19,10 @@ const isUserAllowed = async (storiiId, userId) => {
   return false;
 };
 
-router.post("/:id/entry",
-  [
-    auth,
-    [check("content", "An entry needs content!").notEmpty()],
-  ], async (req, res) => {
+router.post(
+  "/:id/entry",
+  [auth, [check("content", "An entry needs content!").notEmpty()]],
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -37,6 +36,16 @@ router.post("/:id/entry",
 
       await entry.save();
 
+      const storii = await Storii.findById(req.params.id);
+
+      const newStoriiEntries = {
+        entries: [...storii.entries, entry._id],
+      };
+
+      await Storii.findOneAndUpdate({ id: req.params.id }, newStoriiEntries, {
+        overwrite: true,
+      });
+
       return res.status(200).json({
         msg: "New entry successful!",
         entry,
@@ -45,7 +54,8 @@ router.post("/:id/entry",
       console.error(err);
       return res.status(500).json({ msg: "Server error" });
     }
-  });
+  },
+);
 
 router.get("/:id/entry/:entryId", auth, async (req, res) => {
   const isAllowed = await isUserAllowed(req.params.id, req.user.id);
@@ -62,7 +72,6 @@ router.get("/:id/entry/:entryId", auth, async (req, res) => {
     return res.status(500).json({ msg: "Server error" });
   }
 });
-
 
 router.patch("/:id/entry/:entryId", auth, async (req, res) => {
   const isAllowed = await isUserAllowed(req.params.id, req.user.id);
