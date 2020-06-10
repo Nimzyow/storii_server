@@ -43,9 +43,11 @@ router.post(
 
 router.get("/:id", async (req, res) => {
   try {
-    const storii = await Storii.findById(req.params.id)
-      .populate("entries")
-      .populate("writers");
+    const storii = await Storii.findById(req.params.id).populate({
+      path: "entries",
+      populate: { path: "writer" },
+    });
+
     if (!storii) {
       return res.status(404).json({ msg: "Page not found" });
     }
