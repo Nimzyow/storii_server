@@ -7,6 +7,7 @@
     "server-prod": "NODE_ENV=production nodemon index.js",
     "server-dev": "NODE_ENV=development nodemon index.js",
     "test": "NODE_ENV=test mocha ./routes/routesTests/*.test.js",
+    "unit:test": "NODE_ENV=test mocha ./websocketEventHandlers/*.test.js",
     "coverage": "nyc npm run test",
     "start": "node index.js"
   },
@@ -32,6 +33,8 @@
     "mocha": "^7.1.2",
     "nodemon": "^2.0.3",
     "nyc": "^15.0.1",
+    "sinon": "^9.0.2",
+    "sinon-chai": "^3.5.0",
     "supertest": "^4.0.2"
   },
   "dependencies": {
