@@ -1,6 +1,7 @@
 const app = require("./server");
 const db = require("./db");
-const { postNewEntry } = require("./routes/entryHandler");
+// const { postNewEntry } = require("./routes/entryHandler");
+const WebSocketEventHandlers = require("./websocketEventHandlers/index");
 
 db.connect();
 
@@ -11,16 +12,16 @@ const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-const io = require("socket.io")(server);
-io.on("connection", (socket) => {
-  console.log("SOMEONE HAS JOINED connection");
+// eslint-disable-next-line import/order
+const emitter = require("socket.io")(server);
 
-  socket.on("message", async (message) => {
-    try {
-      await postNewEntry(message);
-      io.emit("new-message", message);
-    } catch (err) {
-      console.error(err);
-    }
+emitter.on("connection", (socket) => {
+  const events = WebSocketEventHandlers(emitter);
+
+  Object.entries(events).forEach((handler) => {
+    const eventName = handler[0];
+    const eventFunction = handler[1];
+
+    socket.on(eventName, eventFunction);
   });
 });
