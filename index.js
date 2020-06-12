@@ -1,6 +1,6 @@
 const app = require("./server");
 const db = require("./db");
-const { postNewEntry } = require("./routes/entryHandler");
+const createWebsocket = require("./websocket");
 
 db.connect();
 
@@ -11,16 +11,4 @@ const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-const io = require("socket.io")(server);
-io.on("connection", (socket) => {
-  console.log("SOMEONE HAS JOINED connection");
-
-  socket.on("message", async (message) => {
-    try {
-      await postNewEntry(message);
-      io.emit("new-message", message);
-    } catch (err) {
-      console.error(err);
-    }
-  });
-});
+createWebsocket(server);
