@@ -12,7 +12,7 @@ describe.only("WebSocketEventHandlers", () => {
     const message = { content: "hi", writer: {} };
     let events;
     let emitter;
-    let entryHandlerPostStub;
+    let entryHandlerPostEntryStub;
     let emitStub;
 
     beforeEach(() => {
@@ -21,7 +21,9 @@ describe.only("WebSocketEventHandlers", () => {
       };
       emitStub = sinon.stub(emitter, "emit");
       events = WebSocketEventHandlers(emitter);
-      entryHandlerPostStub = sinon.stub(entryHandler, "post").resolves();
+      entryHandlerPostEntryStub = sinon
+        .stub(entryHandler, "postEntry")
+        .resolves();
     });
 
     afterEach(() => {
@@ -31,7 +33,7 @@ describe.only("WebSocketEventHandlers", () => {
     it("calls it's entryHandler.post with message", async () => {
       await events.message(message);
 
-      expect(entryHandlerPostStub).to.have.been.calledWith(message);
+      expect(entryHandlerPostEntryStub).to.have.been.calledWith(message);
     });
 
     it("emits the new-message after successful entry post", async () => {

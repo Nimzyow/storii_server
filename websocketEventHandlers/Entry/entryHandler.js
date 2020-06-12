@@ -1,7 +1,7 @@
 const Entry = require("../../models/Entry");
 const Storii = require("../../models/Storii");
 
-const post = async (message) => {
+const postEntry = async (message) => {
   try {
     const entry = new Entry({
       writer: message.writer._id,
@@ -20,6 +20,6 @@ const post = async (message) => {
   }
 };
 
-const entryHandler = { post };
+const entryHandler = { postEntry };
 
 module.exports = entryHandler;
