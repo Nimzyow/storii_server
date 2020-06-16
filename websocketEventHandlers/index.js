@@ -8,7 +8,7 @@ const WebSocketEventHandlers = (emitter) => {
         emitter.emit("new-message", message);
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.log(err);
+        throw new Error(err.message);
       }
     },
   };

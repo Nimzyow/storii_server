@@ -17,6 +17,7 @@ const postEntry = async (message) => {
     await storii.save();
   } catch (err) {
     console.error(err);
+    throw new Error("unable to post entry");
   }
 };
 

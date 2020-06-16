@@ -7,7 +7,7 @@ const entryHandler = require("./Entry/entryHandler");
 chai.use(sinonChai);
 const { expect } = chai;
 
-describe.only("WebSocketEventHandlers", () => {
+describe("WebSocketEventHandlers", () => {
   describe("message", () => {
     const message = { content: "hi", writer: {} };
     let events;
@@ -21,9 +21,7 @@ describe.only("WebSocketEventHandlers", () => {
       };
       emitStub = sinon.stub(emitter, "emit");
       events = WebSocketEventHandlers(emitter);
-      entryHandlerPostEntryStub = sinon
-        .stub(entryHandler, "postEntry")
-        .resolves();
+      entryHandlerPostEntryStub = sinon.stub(entryHandler, "postEntry");
     });
 
     afterEach(() => {
@@ -40,6 +38,19 @@ describe.only("WebSocketEventHandlers", () => {
       await events.message(message);
 
       expect(emitStub).to.have.been.calledWith("new-message", message);
+    });
+    it("throws if error occurs ", async () => {
+      const errorMsg = "oh no, an error";
+      const testError = new Error(errorMsg);
+
+      entryHandlerPostEntryStub.throws(testError);
+
+      try {
+        await events.message(message);
+        chai.assert.fail("Should have failed");
+      } catch (err) {
+        expect(err.message).to.equal(errorMsg);
+      }
     });
   });
 });
