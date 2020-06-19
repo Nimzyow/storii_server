@@ -52,6 +52,14 @@ router.post(
           writers: [...storii.writers, user.id],
         });
       }
+
+      if (process.env.NODE_ENV === "production") {
+        const storii = await Storii.findById("5eec96f102ac44ab161b3b14");
+
+        await storii.updateOne({
+          writers: [...storii.writers, user.id],
+        });
+      }
       // /end of hacky
 
       try {
