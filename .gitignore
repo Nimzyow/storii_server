@@ -7,3 +7,5 @@ package-lock.json
 .nyc_output/
 
 seed.db.js
+
+cleanAllEntries.db.js
