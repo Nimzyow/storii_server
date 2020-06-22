@@ -1,26 +1,34 @@
 const Entry = require("../../models/Entry");
 const Storii = require("../../models/Storii");
 
-const postEntry = async (message) => {
+const saveEntry = async (storiiID, message) => {
+  const entry = new Entry({
+    writer: message.writer._id,
+    storiiId: storiiID,
+    content: message.content,
+  });
+
+  await entry.save();
+
+  const storii = await Storii.findById(storiiID);
+
+  storii.entries = [...storii.entries, entry._id];
+  await storii.save();
+};
+
+const postNewEntry = async (message) => {
   try {
-    const entry = new Entry({
-      writer: message.writer._id,
-      storiiId: "5ec66337ac935260a11e1388",
-      content: message.content,
-    });
-
-    await entry.save();
-
-    const storii = await Storii.findById("5ec66337ac935260a11e1388");
-
-    storii.entries = [...storii.entries, entry._id];
-    await storii.save();
+    if (process.env.NODE_ENV === "production") {
+      saveEntry("5eec96f102ac44ab161b3b14", message);
+    } else {
+      saveEntry("5ec66337ac935260a11e1388", message);
+    }
   } catch (err) {
     console.error(err);
     throw new Error("unable to post entry");
   }
 };
 
-const entryHandler = { postEntry };
+const entryHandler = { postNewEntry };
 
 module.exports = entryHandler;
