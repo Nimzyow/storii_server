@@ -4,7 +4,7 @@ const WebSocketEventHandlers = (emitter) => {
   const events = {
     message: async (message) => {
       try {
-        await entryHandler.postEntry(message);
+        await entryHandler.postNewEntry(message);
         emitter.emit("new-message", message);
       } catch (err) {
         // eslint-disable-next-line no-console
