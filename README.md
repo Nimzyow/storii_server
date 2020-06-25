@@ -94,7 +94,7 @@ We also decided early on to user MongoDB to handle our database and the ORM to b
 | Name          | Favourite color | Favourite food | favourite activity | Favourite country | Recommended book         |
 | :------------ | :-------------- | :------------- | :----------------- | :---------------- | :----------------------- |
 | Laura Jackson | Yellow          | Potato Wedges  | gaming             | England           | The morbidly obese Ninja |
-| Nima Soufiani | blue            | thinking       | Scuba diving       | Japan             | Animal farm              |
+| Nima Soufiani | blue            | Ramen          | Scuba diving       | Japan             | Animal farm              |
 
 ## Extra notes
 
