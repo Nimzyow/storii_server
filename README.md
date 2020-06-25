@@ -13,8 +13,8 @@ So you have an idea for a story and you've written your first line. Wouldn't it 
 - [Testing](#testing)
 - [Running the application](#running-the-application)
 - [Tech stack](#tech-stack)
+- [A bit about us](#a-bit-about-us)
 - [Extra notes](#extra-notes)
-- [Team who collaborated on this project](#team-who-collaborated-on-this-project)
 
 ## Installation
 
@@ -89,9 +89,7 @@ We also decided early on to user MongoDB to handle our database and the ORM to b
 - eslint
 - prettier
 
-## Team who collaborated on the original project which includes Ruby on Rails as the backend
-
-### and their daily roles
+### A bit about us
 
 | Name          | Favourite color | Favourite food | favourite activity | Favourite country | Recommended book         |
 | :------------ | :-------------- | :------------- | :----------------- | :---------------- | :----------------------- |
