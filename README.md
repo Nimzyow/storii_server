@@ -1,38 +1,3 @@
-Storii_server
-
-List of things to do:
-
-- install dependencies
-    nodemon [x]
-    express [x]
-    bcrypt [x]
-    jwt [x]
-    mocha [x]
-    supertest [x]
-
-- make a get request to "/" for a response x
-
-- install dependencies
-    mongoose [x]
-
-- mongoose
-    set up User Schema [x]
-    set up Story Schema [x]
-    set up Entry Schema [x]
-
-- node/express
-    
-    API/AUTH
-    1 - create a new user [x] tests []
-    2 - login and authenticate user [x] tests []
-
-    API/STORY
-    3 - add a story(use only once for MVP) [] tests []
-    4 - get a story [] tests []
-    
-    API/ENTRY
-    5 - add a new entry to entry table [x] tests []
-    
 # Storii
 
 So you have an idea for a story and you've written your first line. Wouldn't it be great to collobarte and get a community to contribute to your work? As your contributes create entries to your story, see the seeds of your story grow as they twist and turn before you creating adventures never before thought of. Who knows where your next story will lead you? Let's create memories, let's create Storiis, together.
@@ -65,7 +30,21 @@ That's it! Phew!
 
 ## Database
 
-INSTRUCTIONS TO BE GIVEN HERE AS TO HOW TO SETUP ENVIROMENTAL VARIABLES.
+You will need to sign up to MongoDB and create a cluster.
+
+Once you have created a cluster, you will need to find what the connection URI is.
+
+Click on connect when viewing your cluster and a model should pop up with 3 options. click on "Connect your application" to see your MongoURI.
+
+You will need to create 4 environmental variables.
+
+1. storiiJwtSecret (can be a secret word of your choice)
+
+2. testURI (this will be your MongoURI)
+
+3. developmentURI (this will be your MongoURI except that the word "test" in the MongoURI needs to be replaced with "development")
+
+4. storii_server_url (set this to "http://localhost:4000")
 
 ## Testing
 
@@ -89,42 +68,22 @@ Follow these steps to run the server:
 $ npm run server
 ```
 
-Yay! You just turned on the server for this project! This won't do us much good though as you won't be able to see anything. Fire up an API testing application to test the end points.
-
-A collection for Postman can be found here: "Nima: Hey Laura, shall we include link to postman collection?"
+Yay! You just turned on the server for this project! Don't expect to see anything though as there is no frontend in this repo. [Go to the frontend repo](https://github.com/ShinyVerse/Storii) and follow the instructions there to fire up the front end to see this application running!
 
 ## Planning
 
-This was a group project done for the presentation day at Makers Academy. It involved us giving a presentation on a project we worked. We were given just over a week to come up with an idea and create an application in just over a week. The original backend was done in Rails using a SQL database and the front end was done in React using Reacts Context API for state management. I was resposible for the front end. I wanted more responsibilites in the backend and thought it would be a great exercise to rip out the Rails backend and convert that to a JavaScript backend using Node.js, Express.js and MongoDB as the DB. 
+This project was done as a pair by Laura Jackson and Nima Soufiani. We decided to give ourselves an exciting and cute project to do to level up ourselves. The majority of thought was placed into TDD and readability. Everyday we discussed ways to make our work more readable and we vigirously stuck to TDD'ing with Supertest, Chai and Sinon.
 
-The aim is not only convert the backend but to also thoroughly test it. I believe I've demonstrated my capabilites in using Reacts Context API but I also wanted to demonstrate my capabilites in Redux. To that end I made another aim to convert Reacts Context API to Redux as I believe this will be a great evidence that I am more than competant in the use of Redux.
+The backend, which is this very repo you're on, was built with Node and Express. A lot of thought and time was put into the structure, the file layout of this repo and to the quality of tests. This was all done with the end goal being very readable and easily maintainable code.
 
-**From the below paragraph to the end of the Planning portion of this README is the original brainstorming and planning of this project involving Rails as the backend.**
-
-The planning of this application started out with a brainstorming session where we laid out all of our ideas. The group had many interesting ideas which we discussed in depth:
-
-![ideas](https://raw.githubusercontent.com/rafahg/travel-final-project/master/images/ideas.png)
-
-In the end, we chose to work on an application we felt could challenge us in many areas, called DateSpot. It is an date curator which will get rid of the stress of thinking of a location or what you should do on a date.
-
-![dateSpotBrainStorm](https://raw.githubusercontent.com/rafahg/travel-final-project/master/images/dateSpotBrainStorm.png)
-
-For our MVP we decided to keep it as simple as possible. Our MVP would be to simple display a list of curated dating spots on the main page.
-
-![mvp](https://raw.githubusercontent.com/rafahg/travel-final-project/master/images/mvp.png)
+We also decided early on to user MongoDB to handle our database and the ORM to be handled by Mongoose. The reason for this is the flexibility and ease of adaptiablity to our frequent changing needs, which we anticipate will happen, with this application.
 
 ## Tech stack
 
-- JavaScript
-- React (hooks)
-- Redux
-- Jest and Enzyme
-- Cypress
 - Node
 - Express
 - Supertest
 - chai
-- nyc
 - MongoDB
 - Mongoose
 - eslint
@@ -134,20 +93,11 @@ For our MVP we decided to keep it as simple as possible. Our MVP would be to sim
 
 ### and their daily roles
 
-| Name                 | Favourite color           | Favourite food           | favourite activity           | Favourite country           | Recommended book           |
-| :------------------- | :-------------- | :-------------- | :-------------- | :-------------- | :-------------- |
-| Laura Jackson       | Game    | of      | thrones    | in | Chinese          |
-| Nima Soufiani        | blue      | thinking    | Scuba diving | Japan          | Animal farm    |
-
-
+| Name          | Favourite color | Favourite food | favourite activity | Favourite country | Recommended book         |
+| :------------ | :-------------- | :------------- | :----------------- | :---------------- | :----------------------- |
+| Laura Jackson | Yellow          | Potato Wedges  | gaming             | England           | The morbidly obese Ninja |
+| Nima Soufiani | blue            | thinking       | Scuba diving       | Japan             | Animal farm              |
 
 ## Extra notes
 
-This project is turning to be a great exercise to really test my capabilites. I am not only trying to convert the backend to Node and Express with MongoDB as my database, I am also converting Reacts Context API to Redux. I am also doing all of this with testing in mind. I aim to have the backend and front end thoroughly tested. My use of Tests and implementation of Redux will be the main showcase of this project.
-
-
-    
-
-
-
-
+This project was done entirely remotely which allowed us practice pairing and remote working. Altogether it's been very productive so far and demonstrated that even when working remotely we can still get stuff done. Putting real thought into the structure, naming and placement of files in this repo was great fun and has paid off in dividends as it is very intuitive where any file should be. We will apply this same thought process as the application grows further.
