@@ -21,14 +21,14 @@ describe("WebSocketEventHandlers", () => {
       };
       emitStub = sinon.stub(emitter, "emit");
       events = WebSocketEventHandlers(emitter);
-      entryHandlerPostEntryStub = sinon.stub(entryHandler, "postEntry");
+      entryHandlerPostEntryStub = sinon.stub(entryHandler, "postNewEntry");
     });
 
     afterEach(() => {
       sinon.restore();
     });
 
-    it("calls it's entryHandler.post with message", async () => {
+    it("calls it's entryHandler.postNewEntry with message", async () => {
       await events.message(message);
 
       expect(entryHandlerPostEntryStub).to.have.been.calledWith(message);
@@ -51,6 +51,30 @@ describe("WebSocketEventHandlers", () => {
       } catch (err) {
         expect(err.message).to.equal(errorMsg);
       }
+    });
+  });
+  describe.only("delete entry", () => {
+    let events;
+    let emitter;
+    let entryHandlerDeleteEntryStub;
+    let emitStub;
+
+    beforeEach(() => {
+      emitter = {
+        emit: () => {},
+      };
+      emitStub = sinon.stub(emitter, "emit");
+      events = WebSocketEventHandlers(emitter);
+      entryHandlerDeleteEntryStub = sinon.stub(entryHandler, "deleteEntry");
+    });
+    it.only("calls its entryHandler.deleteEntry with entry info", async () => {
+      const entryInfo = {
+        storiiId: "storiiId",
+        entryId: "entryId",
+      };
+      await events.deleteEntry(entryInfo);
+
+      expect(entryHandlerDeleteEntryStub).to.have.been.calledWith(entryInfo);
     });
   });
 });

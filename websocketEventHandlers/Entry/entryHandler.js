@@ -29,6 +29,19 @@ const postNewEntry = async (message) => {
   }
 };
 
-const entryHandler = { postNewEntry };
+const deleteEntry = async (entryInfo) => {
+  try {
+    if (process.env.NODE_ENV === "production") {
+      await Entry.findOneAndRemove({ id: entryInfo.entryId });
+    } else {
+      await Entry.findOneAndRemove({ id: entryInfo.entryId });
+    }
+  } catch (err) {
+    console.error(err);
+    //throw new Error("unable to post entry");
+  }
+};
+
+const entryHandler = { postNewEntry, deleteEntry };
 
 module.exports = entryHandler;
