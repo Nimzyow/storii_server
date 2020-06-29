@@ -38,7 +38,7 @@ const deleteEntry = async (entryInfo) => {
     }
   } catch (err) {
     console.error(err);
-    //throw new Error("unable to post entry");
+    throw new Error("unable to delete entry");
   }
 };
 

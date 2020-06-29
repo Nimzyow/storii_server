@@ -53,7 +53,11 @@ describe("WebSocketEventHandlers", () => {
       }
     });
   });
-  describe.only("delete entry", () => {
+  describe("delete entry", () => {
+    const entryInfo = {
+      storiiId: "storiiId",
+      entryId: "entryId",
+    };
     let events;
     let emitter;
     let entryHandlerDeleteEntryStub;
@@ -67,14 +71,28 @@ describe("WebSocketEventHandlers", () => {
       events = WebSocketEventHandlers(emitter);
       entryHandlerDeleteEntryStub = sinon.stub(entryHandler, "deleteEntry");
     });
-    it.only("calls its entryHandler.deleteEntry with entry info", async () => {
-      const entryInfo = {
-        storiiId: "storiiId",
-        entryId: "entryId",
-      };
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it("calls its entryHandler.deleteEntry with entry info", async () => {
       await events.deleteEntry(entryInfo);
 
       expect(entryHandlerDeleteEntryStub).to.have.been.calledWith(entryInfo);
+    });
+    it("throws if error occurs ", async () => {
+      const errorMsg = "oh no, an error";
+      const testError = new Error(errorMsg);
+
+      entryHandlerDeleteEntryStub.throws(testError);
+
+      try {
+        await events.deleteEntry(entryInfo);
+        chai.assert.fail("Should have failed");
+      } catch (err) {
+        expect(err.message).to.equal(errorMsg);
+      }
     });
   });
 });
