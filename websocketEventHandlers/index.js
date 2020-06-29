@@ -14,7 +14,7 @@ const WebSocketEventHandlers = (emitter) => {
     deleteEntry: async (entryInfo) => {
       try {
         await entryHandler.deleteEntry(entryInfo);
-        //emitter.emit("new-message", entryInfo);
+        emitter.emit("entry-deleted", entryInfo);
       } catch (err) {
         // eslint-disable-next-line no-console
         throw new Error(err.message);

@@ -94,5 +94,11 @@ describe("WebSocketEventHandlers", () => {
         expect(err.message).to.equal(errorMsg);
       }
     });
+
+    it("emits the entry-deleted after successful entry deletion", async () => {
+      await events.deleteEntry(entryInfo);
+
+      expect(emitStub).to.have.been.calledWith("entry-deleted", entryInfo);
+    });
   });
 });
